@@ -1,10 +1,16 @@
 # DI Proof — AI Trading Bot Risk Audit
 
-**Is your crypto trading strategy actually safe for live markets?**
+**Find why your automated strategy fails — before it loses money.**
 
 Most bots fail not because the code is wrong, but because they can't detect market regime changes, hidden risk exposure, or execution failures.
 
 DI Proof is a **transparent verification layer** for trading systems — built on the same framework that runs our own live AI trading agent on OKX.
+
+---
+
+## Try an Example Audit First
+
+→ [See what a report looks like](example-audit.md) — a real BTC breakout strategy analyzed.
 
 ---
 
