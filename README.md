@@ -1,46 +1,63 @@
-# DI Proof of Performance
+# DI Proof — AI Trading Bot Risk Audit
 
-**An autonomous AI trading system. This repository is the public proof.**
+**Is your crypto trading strategy actually safe for live markets?**
 
-DI has been running live since **2026-08-06**. Every day, this repository receives a new performance report — automatically generated, automatically pushed, never edited.
+Most bots fail not because the code is wrong, but because they can't detect market regime changes, hidden risk exposure, or execution failures.
 
-## What you'll find here
-
-| Directory | What's inside |
-|-----------|--------------|
-| [`daily/`](daily/) | One report per day — equity, positions, trades, agent health |
-| [`trades/`](trades/) | Settled trade records with entry/exit reasons |
-| [`metrics/`](metrics/) | Rolling PF, Sharpe, win rate |
-| [`incidents/`](incidents/) | Every system incident — what broke, when, how it was fixed |
-
-## Why this exists
-
-Most crypto trading bots show you a backtest. DI shows you **what actually happened every single day since it started.**
-
-- ✅ Live trading only — no backtest-only results
-- ✅ Every trade documented with entry reason, exit reason, and version
-- ✅ Every incident recorded with timestamp and fix commit
-- ✅ Git history proves nothing was edited after the fact
-
-## How it works
-
-```
-DI scans markets every minute
-  → evaluates RSI + sentiment + regime
-  → executes trades on OKX with automated risk controls
-  → logs everything
-  → pushes this report at 23:55 CST daily
-```
-
-## Current status
-
-See the latest report: [`daily/`](daily/)
-
-**Strategy:** hrscan v6.1.1 — Multi-timeframe RSI momentum  
-**Exchange:** OKX perpetual futures  
-**Risk:** 5% per trade, auto SL/TP, Kill Switch, circuit breaker  
-**Started:** 2026-08-06 · $517 initial capital
+DI Proof is a **transparent verification layer** for trading systems — built on the same framework that runs our own live AI trading agent on OKX.
 
 ---
 
-*No promises. No backtests. Just records.*
+## Free Strategy Health Check
+
+[→ Open a free diagnostic request](../../issues/new?title=Health+Check:+%5Bstrategy+name%5D&body=%23%23%20Strategy%0A%2A%28Describe%20entry%2Fexit%2Fposition%20sizing%20rules%29%2A%0A%0A%23%23%20Market%0A%2A%28e.g.%20BTC-USDT%2C%20SOL-USDT%29%2A%0A%0A%23%23%20Timeframe%0A%2A%28e.g.%2015m%2C%201H%2C%204H%29%2A%0A%0A%23%23%20Biggest%20Concern%0A%2A%28e.g.%20drawdown%2C%20overfitting%2C%20live%20vs%20backtest%20gap%29%2A)
+
+You'll receive a diagnostic report covering:
+
+- **Regime dependency** — does your strategy only work in trending markets?
+- **Hidden exposure** — concentration risk you might be missing
+- **Drawdown scenarios** — what breaks under stress
+- **Execution safety** — API failures, duplicate orders, slippage gaps
+- **Risk control coverage** — circuit breakers, position sizing, kill switches
+
+---
+
+## How It Works
+
+```
+Your Strategy
+      ↓
+DI Intelligence Engine (regime detection + multi-factor analysis)
+      ↓
+Risk Analysis (drawdown simulation + failure scenario modeling)
+      ↓
+Verification Report (actionable findings, not theoretical warnings)
+```
+
+---
+
+## Why Trust This?
+
+We don't just analyze strategies — we run one ourselves.
+
+**hrscan v6** is an autonomous AI trading agent operating with real money on OKX. Every trade, every system incident, and every fix is publicly recorded in this repo.
+
+| Asset | What It Proves |
+|-------|---------------|
+| [Daily Reports](daily/) | Real money, real trades, every day |
+| [System Incidents](incidents/) | Things that broke — and how we fixed them |
+| [Trade Ledger](trades/) | Full audit trail with entry/exit/sizing |
+| [Version History](https://github.com/Ancoria/di-proof/commits/main) | No back-editing. Git-proven. |
+
+No marketing fluff. No profit promises. Just a system that runs, breaks, gets fixed, and proves it.
+
+---
+
+## After the Free Check
+
+- **$49/mo** — Daily monitoring: regime alerts, strategy health, risk dashboard
+- **$149** — Full autonomous deployment with Kill Switch and execution protection
+
+But first — let's find out if your strategy survives real markets.
+
+[→ Get your free health check](../../issues/new?title=Health+Check:+%5Bstrategy+name%5D&body=%23%23%20Strategy%0A%2A%28Describe%20entry%2Fexit%2Fposition%20sizing%20rules%29%2A%0A%0A%23%23%20Market%0A%2A%28e.g.%20BTC-USDT%2C%20SOL-USDT%29%2A%0A%0A%23%23%20Timeframe%0A%2A%28e.g.%2015m%2C%201H%2C%204H%29%2A%0A%0A%23%23%20Biggest%20Concern%0A%2A%28e.g.%20drawdown%2C%20overfitting%2C%20live%20vs%20backtest%20gap%29%2A)
