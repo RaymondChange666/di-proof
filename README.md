@@ -67,3 +67,20 @@ No marketing fluff. No profit promises. Just a system that runs, breaks, gets fi
 But first — let's find out if your strategy survives real markets.
 
 [→ Get your free health check](../../issues/new?title=Health+Check:+%5Bstrategy+name%5D&body=%23%23%20Strategy%0A%2A%28Describe%20entry%2Fexit%2Fposition%20sizing%20rules%29%2A%0A%0A%23%23%20Market%0A%2A%28e.g.%20BTC-USDT%2C%20SOL-USDT%29%2A%0A%0A%23%23%20Timeframe%0A%2A%28e.g.%2015m%2C%201H%2C%204H%29%2A%0A%0A%23%23%20Biggest%20Concern%0A%2A%28e.g.%20drawdown%2C%20overfitting%2C%20live%20vs%20backtest%20gap%29%2A)
+
+
+## Transparency & Incident History
+
+This repository is a public reliability archive, not a marketing page.
+
+- **[INCIDENT #008](incidents/008-silent-daemon-failure.md)** — silent daemon
+  failure detected by our own audit: 9 days offline while dashboards looked
+  healthy, an unreachable time-stop, and monitoring drift. Root causes, fixes,
+  and tests are all documented.
+- **[Historical trade records](trades/README.md)** — every trade from the
+  pre-upgrade period, explicitly marked CONTAMINATED, with reasons.
+- **[Daily Trust Reports](daily/)** — daily system health, data integrity
+  events, and trading activity. Reporting gaps are documented, not hidden.
+
+A bot that only shows winning screenshots tells you nothing. Here you can
+see when this system failed, why, and what changed to prevent it.
