@@ -133,3 +133,37 @@ Before this incident, HK di_pulse monitored 2 of 11 components. Now:
 freeze: raw logs, state, unit file) · `factory.service.bak.incident007` ·
 `di_pulse.py.bak.incident007` (both hosts) · `shadow_worker_v3.py.bak.bars_held`
 (HK)*
+
+
+---
+
+## Follow-up: Phase 2 — Data Integrity Layer (same day)
+
+From "system alive" to "system inputs trusted". The remaining unknown was:
+can the agent execute correctly on wrong data? RSI=0 and ghost prices are
+the entry points.
+
+**RSI Guard (Phase 2.1)** — every signal entry validates RSI before signal
+generation: finite, numeric, 0 < rsi <= 100. Wired into 4 strategy paths:
+hrscan_v5 (production), factory_v1, shadow_worker_v3, paper_hrscan.
+
+**Price Sanity (Phase 2.2)** — every order/entry path validates price:
+finite, positive. Ghost-order class (PEPE $0.0000) permanently closed.
+Wired into the same 4 paths.
+
+**Data Event Logging (Phase 2.3)** — unified DATA_EVENT jsonl
+(`/root/bot/runtime/data_events.jsonl`, both hosts). Invalid data is never
+silently swallowed: every rejection records type / ts / action / symbol /
+value / reason.
+
+**Replay test (Phase 2.4)** — 15/15 pass:
+- Case A: normal RSI (57.1) → signal proceeds, zero events emitted
+- Case B: 14 consecutive down candles → calc_rsi returns 0 (formula
+  boundary, not data corruption) → rejected + INVALID_RSI event
+- Case C: price 0 / negative / NaN → order blocked + INVALID_PRICE events
+- Symbol: empty / not-in-allowlist blocked, allowlisted passes
+
+**Lesson:** The RSI=0 root cause was a mathematical boundary in the
+formula (g=0 → RSI=0 exactly), not corrupted data. The guard treats it as
+invalid anyway — a 14-candle one-way move is a regime the signal logic
+should not act on, and the event log keeps every rejection auditable.
