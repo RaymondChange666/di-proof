@@ -1,5 +1,21 @@
 # DI System Incidents
 
+## INCIDENT #008 — Silent Daemon Failure & Monitoring Blind Spots
+**Date:** 2026-08-15 · **Severity:** Critical · **Status:** Fixed
+
+**Symptom:** Factory shadow bot offline 9 days undetected; heartbeat showed stale state as live. Second finding: breakout20 TIME_STOP unreachable (bars_held hardcoded 0) — worker alive but position could never time out. Third: control_api monitoring a retired system (config drift).
+
+**Root Cause:** (1) Malformed systemd unit (semicolon-packed directives) — every restart failed silently. (2) Execution-correctness bug: exit call hardcoded bars_held=0. (3) Monitor target not repointed after system replacement.
+
+**Fix:** Controlled unit rewrite (backup + diff + reload), TIME_STOP derives real bars held from entry time (6/6 tests pass), di_pulse upgraded to full-chain liveness (HK 2/11 → 11/11 components via monitor_targets.yaml), shadow_heartbeat bridged to control_api (health 0 → 100).
+
+**Lesson:** Process alive ≠ behavior correct. Monitoring must verify output freshness, not file existence.
+
+**Details:** [008-silent-daemon-failure.md](008-silent-daemon-failure.md)
+
+---
+
+
 > *Every failure is public. Every fix is proven. This is the Trust Layer.*
 
 ---
