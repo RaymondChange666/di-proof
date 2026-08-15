@@ -167,3 +167,34 @@ value / reason.
 formula (g=0 → RSI=0 exactly), not corrupted data. The guard treats it as
 invalid anyway — a 14-candle one-way move is a regime the signal logic
 should not act on, and the event log keeps every rejection auditable.
+
+
+---
+
+## Follow-up: Phase 3 — Trusted Runtime & Sample V2 (same day)
+
+Recovery complete. From here the system accumulates the first verifiable
+trusted-run track record, not just trades.
+
+**Sample boundary:** 2026-08-15T02:00:00Z (10:00 CST) — after Phase 2
+deploy + all service restarts. Written to
+`/root/trading_logs/factory/sample_v2_start.txt`.
+
+**Trade classification:** every trade now carries `sample_version` and
+`trade_class`, classified by ENTRY time. All 41 historical rows (38
+original + 3 reconciliation exits) backfilled as V1/contaminated. New
+entries after the boundary: V2/normal.
+
+**Daily Trust Report** (daily_report.py): four new sections — System
+Health (daemons, hrscan, factory log freshness), Data Integrity (daily
+DATA_EVENT counts by type), Sample V2 (V2-only trade stats), Incidents.
+
+**Checkpoints:**
+- A (24h, 2026-08-16 10:05 CST): system reliability — daemons, restarts,
+  data events, V2 trades. Script: /root/bot/checkpoint_a.sh
+- B (30 V2 trades): PF / WR / DD observation, no optimization
+- C (100 V2 trades): strategy quality discussion
+
+**Principle:** equity is not the primary metric in this phase. The asset
+being built is the Reliability Track Record: system health, data
+integrity, audit completeness.
