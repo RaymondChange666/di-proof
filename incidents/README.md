@@ -1,5 +1,20 @@
 # DI System Incidents
 
+## INCIDENT #009 — Nine Days of Zero Fills: Order Size Violated Contract Lot Size
+**Date:** 2026-08-15 · **Severity:** Critical · **Status:** Fixed (10e5e9c + ae27754)
+
+**Symptom:** hrscan v6 live strategy ran 9 days (Aug 6-15) with zero filled orders. All 97 trade records were rejected orders. SUSHI logged "All operations failed" 82 times; BNB entries printed as success while no order existed on OKX.
+
+**Root Cause:** Three stacked execution bugs: (1) order size not floored to contract lotSz — SUSHI/WIF lotSz=1 rejects fractional sizes, SOL lotSz=0.01 masked the bug; (2) OKX rejection reason lives in data[0].sMsg while top-level msg is empty — code printed "OK" for rejections (retroactively reframes INCIDENT #007's "12 successful BNB orders" as 12 mislabeled rejections); (3) trade log written unconditionally — rejected orders became phantom OPEN positions.
+
+**Fix:** 10e5e9c: per-coin lot_sz + size floor, sMsg passthrough, success-only trade log, wrapper py_compile gate restored. ae27754: reconciler skips rejected records; 97 phantom entries backfilled rejected=True; ledger reset to honest zero.
+
+**Lesson:** Log "success" ≠ order exists. orders-history is ground truth for fills. A system can look perfectly healthy while the execution layer is 100% dead — inspection must cross-check trade records against orders-history.
+
+**Details:** [009-zero-fill-execution-bugs.md](009-zero-fill-execution-bugs.md)
+
+---
+
 ## INCIDENT #008 — Silent Daemon Failure & Monitoring Blind Spots
 **Date:** 2026-08-15 · **Severity:** Critical · **Status:** Fixed
 
