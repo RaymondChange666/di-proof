@@ -13,6 +13,15 @@ DI Proof is a **transparent verification layer** for trading systems — built o
 → [See what a report looks like](example-audit.md) — a real BTC breakout strategy analyzed.
 
 ---
+## Reliability Sweep — 2026-08-22
+
+Our live system was handed to an independent engineer for adversarial audit:
+5 P0s found and fixed, then our own patches were attacked again — 9 more
+findings, all fixed, all public:
+
+→ [P0 Reliability Sweep full record](notes/p0-reliability-sweep-20260822.md)
+
+---
 
 ## Free Strategy Health Check
 
