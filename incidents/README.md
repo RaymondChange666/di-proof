@@ -1,5 +1,33 @@
 # DI System Incidents
 
+## INCIDENT #011 — Trade Ledger Write Failure After Position Close & Missing Position Ownership
+**Date:** 2026-08-22 · **Severity:** High · **Status:** Fixed (878ab31 + 3a4057a)
+
+**Symptom:** Trail-stop closed a SOL LONG on 8/21 14:16 then crashed with NameError (`trades_file` not defined) — the post-close ledger write was lost. Same day, a manually-opened App position was erroneously closed by the agent's RSI-reversal exit (-0.84 USDT): `trail_stops` managed every exchange position with no ownership check.
+
+**Root Cause:** (1) `trades_file` was function-local in `recent_pnl()`; `trail_stops` referenced it at module level — the first real close triggered the NameError. (2) Ownership was assumed from exchange state: "position exists" was treated as "I own it".
+
+**Fix:** `878ab31` module-level `trades_file`. `3a4057a` Position Ownership Guard: FILLED → REGISTERED (`open_positions.json`), trail manages only registered positions, exchange>local reconcile every scan, unregistered positions alert-only (never managed), unregister on confirmed close only.
+
+**Lesson:** Funds-state persistence paths need real execution-path validation, not static checks. Exchange state > local state. External/manual trades belong in the reconciliation log, never the strategy ledger.
+
+**Details:** [011-ledger-write-and-ownership.md](011-ledger-write-and-ownership.md)
+
+---
+
+## INCIDENT #010 — A2A Whitelist Drop: Platform Verification Task Discarded
+**Date:** 2026-08-20 · **Severity:** High · **Status:** Workaround live; platform-side whitelist gap reported
+
+**Symptom:** OKX support reported ASP #10505 review stuck: the platform's Service 5 verification task (SOL Trend Strategy Backtest, 8 USDT, client #6058) was never received/processed within 1 hour.
+
+**Root Cause:** The `job_asp_selected` envelope DID reach the ASP's XMTP inbox, but the a2a-node daemon dropped it — the verification-flow sender inboxes (`8f816b43…`, `5594be7a…`) are not in the platform's own `system-config` whitelist (verified identical logic in a2a-node 0.2.7 and 0.2.8). Platform-side gap, not a daemon defect.
+
+**Fix:** Manual on-chain processing path (message recovered from XMTP store; apply + deliver txs on chain, backtest executed and delivered honestly); sender inbox IDs reported to OKX support.
+
+**Details:** [010-a2a-whitelist-drop.md](010-a2a-whitelist-drop.md)
+
+---
+
 ## INCIDENT #009 — Nine Days of Zero Fills: Order Size Violated Contract Lot Size
 **Date:** 2026-08-15 · **Severity:** Critical · **Status:** Fixed (10e5e9c + ae27754)
 
