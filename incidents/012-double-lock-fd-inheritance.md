@@ -99,3 +99,21 @@ There was no stuck process. ps/lsof/fuser were empty mid-outage (19:20-19:21 CST
 the lock was re-acquired and re-collided every minute by the fd-inheritance
 mechanism itself. Recovery at 21:16 was the fix deploy, not a kill. No unknown
 killer to record.
+
+
+## v4-final hardening deployed (2026-08-23 03:56 CST, T2 round-3 + president line-by-line review)
+
+Two-file deploy (python first, wrapper second, md5-verified, backups .bak.v4final):
+1. wrapper: `timeout --kill-after=15 300` + `python3.11 -u`; last_success write REMOVED
+   from wrapper (moved into python); `flock -u 9` preserved with INVARIANT comment.
+2. python: in-python atomic `touch_last_success()` (tmp+fsync+rename); GATE_SKIP x2
+   (circuit_breaker/min_equity - expected pauses, heartbeat continues) vs GATE_ERROR x3
+   (positions_api_failure/ownership_corrupted/cooldown_corrupted - real faults, no
+   heartbeat -> R9 watchdog alarms within 180s); per-tick `tick OK` heartbeat + flush.
+3. President review correction: cooldown_corrupted initially GATE_SKIP - reclassified
+   GATE_ERROR (state corruption is a fault, not a pause; the branch itself writes
+   STATE_CORRUPTION events).
+
+Post-deploy verification (03:57:03 tick): tick OK printed with correct local time,
+zero python-level lock collisions, last_success mtime == tick OK timestamp (python
+internal write path confirmed), zero GATE_ERROR lines.
