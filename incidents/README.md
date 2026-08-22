@@ -1,5 +1,20 @@
 # DI System Incidents
 
+## INCIDENT #012 — Double-Lock fd Inheritance: hrscan Silently Dead for 16 Hours
+**Date:** 2026-08-22 · **Severity:** High · **Status:** Fixed (b7f32c0 + b3e0cca)
+
+**Symptom:** Every cron tick from 03:02 logged `already running (python-level lock)` while no process existed, no lock holder existed (`lsof`/`fuser` empty), yet `last_success.txt` refreshed each minute — strategy silently stopped scanning for 16 hours, watchdog falsely healthy.
+
+**Root Cause:** Double single-instance lock with fd inheritance conflict — wrapper `flock` on fd 9 was inherited by the python child; python's own `fcntl.flock` on a new fd always conflicted with the inherited lock and exited. Lock-failure exit code was 0, so the wrapper wrote `last_success` on failed-fast exits.
+
+**Fix:** b7f32c0 wrapper releases its flock before launching python (`flock -u 9`); b3e0cca python lock-failure exits 1 so last_success only records real scan completions.
+
+**Lesson:** Two-layer locks must be tested for fd inheritance on the happy path, watchdog writers must bind to real success, and py_compile green ≠ deployment test.
+
+**Details:** [012-double-lock-fd-inheritance.md](012-double-lock-fd-inheritance.md)
+
+---
+
 ## INCIDENT #011 — Trade Ledger Write Failure After Position Close & Missing Position Ownership
 **Date:** 2026-08-22 · **Severity:** High · **Status:** Fixed (878ab31 + 3a4057a)
 
