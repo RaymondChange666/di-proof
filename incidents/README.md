@@ -10,6 +10,7 @@
 **Fix:** b7f32c0 wrapper releases its flock before launching python (`flock -u 9`); b3e0cca python lock-failure exits 1 so last_success only records real scan completions.
 
 **Lesson:** Two-layer locks must be tested for fd inheritance on the happy path, watchdog writers must bind to real success, and py_compile green ≠ deployment test.
+**Post-Incident:** Per-minute replay of the outage window (3 threshold variants) found 0 missed entry signals; governance addendum in the detail file.
 
 **Details:** [012-double-lock-fd-inheritance.md](012-double-lock-fd-inheritance.md)
 

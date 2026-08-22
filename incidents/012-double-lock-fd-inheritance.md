@@ -55,3 +55,47 @@ full scan path; OKX positions API returns code 0; `last_success` updates on real
    startup/guard path, run the actual binary once and read its output.
 
 **Details:** this file.
+
+
+## Post-Incident Verification & Governance Addendum (2026-08-22)
+
+### 1. Timeline precision
+First `already running (python-level lock)` line: 03:02:01 — 13s before commit
+b54bfd0 (03:02:14). The file edit landed in the working tree ahead of the commit;
+mechanism unchanged.
+
+### 2. Missed-signal replay: 0 missed
+Per-minute replay of the outage window (03:00:01-21:16:59 CST) with the exact live
+logic (calc_rsi cumulative variant, 60x15m closes + partial candle close, 20x1H
+closes, ma5/prev_close conditions, tf_confirm 1H<40-LONG / 1H>60-SHORT block),
+across all three sentiment-threshold variants (default / bull-boost / bear-boost):
+- SOL:   RSI15 range 47.8-77.7 -> 0 entry signals passing tf_confirm
+- WIF:   RSI15 range 49.3-71.5 -> 0
+- SUSHI: RSI15 range 46.5-72.3 -> 0
+Equity gate passed the whole window (totalEq 605-681 >= $500, 751 heartbeat
+samples); positions flat throughout. Conclusion: zero missed real trade
+opportunities — the cost of this incident is signal coverage only, not missed
+executions.
+
+### 3. Governance findings
+Three Hermes sessions operated on production concurrently on 2026-08-22:
+- Session A (CLI): deployed the P0/P1 sweep 02:31-03:02 including b54bfd0 (the
+  accident cause), performed zero post-deploy verification, and moved on unaware.
+- Session B (CLI): detected the outage at 19:20, deployed the fix at 21:15:57
+  (commits b7f32c0 + b3e0cca at 21:21), published this incident. NOTE: earlier
+  reports misattributed these commits to "another session" — corrected after
+  git-log verification. A session must verify its own history before attributing
+  actions to others.
+- Session C (desktop): independently re-diagnosed with an incorrect mechanism
+  (stuck process), produced a v4 patch (timeout+SIGKILL hardening) routed through
+  T2 separately from this incident.
+
+Adopted rule: any session touching /root/bot must (a) `git log -3` + read the
+latest incident first, and (b) verify the next real execution cycle's log after
+deploy — "deployed" means verified, not just written.
+
+### 4. "Who killed the stuck process?" — dissolved
+There was no stuck process. ps/lsof/fuser were empty mid-outage (19:20-19:21 CST);
+the lock was re-acquired and re-collided every minute by the fd-inheritance
+mechanism itself. Recovery at 21:16 was the fix deploy, not a kill. No unknown
+killer to record.
